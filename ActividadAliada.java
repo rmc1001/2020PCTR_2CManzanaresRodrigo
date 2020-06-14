@@ -23,11 +23,16 @@ private IJuego juego;
 	 * Run de la clase
 	 */
 	public void run() {	
-		juego.eliminarEnemigo(tipo);
+		try {
+			juego.eliminarEnemigo(tipo);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 			TimeUnit.MILLISECONDS.sleep((long) (Math.random()*5));
-		}catch(InterruptedException e){
-			e.printStackTrace();
+		}catch(InterruptedException e1){
+			e1.printStackTrace();
 		}
 	}
 }
