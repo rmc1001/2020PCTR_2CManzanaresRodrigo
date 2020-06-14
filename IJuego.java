@@ -5,6 +5,7 @@ package simulador_juego.enunciado;
  *
  */
 public interface IJuego {
-	public void generarEnemigo(int tipoEnemigo);
-	public void eliminarEnemigo(int tipoEnemigo);
+	public void generarEnemigo(int tipoEnemigo) throws InterruptedException;
+	public void eliminarEnemigo(int tipoEnemigo) throws InterruptedException;
 }
+
