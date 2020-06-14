@@ -15,13 +15,14 @@ public class SistemaLanzador {
 			
 			int tipos=4;
 			int max=0;
-			for(int i=tipos;i>0;i--) {
+			for(int i=tipos;i>=0;i--) {
 				max=max+i;
 			}
 			//diccionario
 			Hashtable<Integer,Integer>diccionario=new Hashtable<Integer,Integer>();
 						int t=0;
-			for(int i=max;i>0;i--) {
+			for(int i=tipos;i>0;i--) {
+				System.out.println("etiq"+t+"num"+i);
 				diccionario.put(t, i);
 				t++;
 			}
@@ -31,16 +32,17 @@ public class SistemaLanzador {
 			
 			//creación de los diferentes hilos
 			
-				for(int i=0;i<tipos-1;i++) {
-					for(int k= diccionario.get(tipos);k>0;k--){
-					Thread eliminar =new Thread(new ActividadAliada(i, juego));
-					Thread generar = new Thread(new ActividadEnemiga(i,juego));
-					generar.start();
-					generar.join();
-					eliminar.start();
-					eliminar.join();
-				}
+				for(int i=0;i<tipos;i++) {
+					int j=diccionario.get(i);
+					for(int k=j;k>0;k--){
+						Thread generar = new Thread(new ActividadEnemiga(i,juego));
+						Thread eliminar =new Thread(new ActividadAliada(i, juego));
+						
+						generar.start();
+						eliminar.start();
+				
 			}
 		}	
 
+}
 }
