@@ -35,35 +35,51 @@ public class Juego implements IJuego {
 	 * Función generar enemigo
 	 * @param tipoEnemigo
 	 */
-	public void generarEnemigo(int tipoEnemigo) {
-		assert(tipoEnemigo<=tiposenemigos||tipoEnemigo>=0);//check de tipoEnemigo dentro de todos los enemigos
-		if(!contadoresEnemigosTipo.containsKey(tipoEnemigo)) {
-			for(int i=0;i<tiposenemigos;i++) {
-				contadoresEnemigosTipo.put(i, 0);
-				contadoresEliminadosTipo.put(i, 0);
-			}
-		}
+	public synchronized void generarEnemigo(int tipoEnemigo)throws InterruptedException {
+		assert(tipoEnemigo<=tiposenemigos||tipoEnemigo>=0);//check de tipoEnemigo dentro de todos los enemigo		
 		comprobarAntesDeGenerar(tipoEnemigo);
+		int var;
+		var=contadoresEnemigosTipo.get(tipoEnemigo);
+		contadoresEnemigosTipo.put(tipoEnemigo, var+1);
+		notificargeneracion();
+		
+		ImprimirInfo(tipoEnemigo,"A");
 		checkInvariante();
 		
 		
 	}
+	public void notificargeneracion() {
+		contadorEnemigosTotales++;
+		notify();
+	}
+	
 	@Override
 	/**
 	 * funcion eliminar enemigo
 	 * @param tipoEnemigo
 	 */
-	public void eliminarEnemigo(int tipoEnemigo) {
+	public synchronized void eliminarEnemigo(int tipoEnemigo) throws InterruptedException{
 		assert(tipoEnemigo<=tiposenemigos||tipoEnemigo>=0);//check de tipoEnemigo dentro de todos los enemigos
-		if(!contadoresEliminadosTipo.containsKey(tipoEnemigo)) {
-			for(int i=0;i<tiposenemigos;i++) {
-				contadoresEliminadosTipo.put(i, 0);
-				contadoresEnemigosTipo.put(i, 0);
-			}
-		}
+		
 		comprobarAntesDeEliminar(tipoEnemigo);
+		
+			int var=contadoresEnemigosTipo.get(tipoEnemigo);
+				contadoresEnemigosTipo.put(tipoEnemigo, var-1);
+				//if(!contadoresEliminadosTipo.containsKey(tipoEnemigo)) {
+				//	contadoresEliminadosTipo.put(tipoEnemigo, 0);
+			//}
+				int jdk=contadoresEliminadosTipo.get(tipoEnemigo);
+				contadoresEliminadosTipo.put(tipoEnemigo, jdk+1);
+				notificarsalida();
+				ImprimirInfo(tipoEnemigo,"B");
+			
+		
 		checkInvariante();
 		
+	}
+	public void notificarsalida() {
+		contadorEnemigosTotales--;
+		notify();
 	}
 	/**
 	 * funcion imprimir info
@@ -113,32 +129,27 @@ public class Juego implements IJuego {
 	 * @param tipoEnemigo
 	 */
 	protected void comprobarAntesDeGenerar(int tipoEnemigo) {
-		int var;
-		var=contadoresEnemigosTipo.get(tipoEnemigo);
-		contadoresEnemigosTipo.put(tipoEnemigo, var+1);
-		contadorEnemigosTotales++;
-		
-		ImprimirInfo(tipoEnemigo,"A");
+		if(!contadoresEnemigosTipo.containsKey(tipoEnemigo)) {
+			for(int i=0;i<tiposenemigos;i++) {
+				contadoresEnemigosTipo.put(i, 0);
+				contadoresEliminadosTipo.put(i, 0);
+			}
+		}
 		
 	};
 	/**
 	 * Funcion para comprobar antes de eliminar
 	 * @param tipoEnemigo
 	 */
-	protected void comprobarAntesDeEliminar(int tipoEnemigo) {
-		if(contadorEnemigosTotales>0) {
-		int var=contadoresEnemigosTipo.get(tipoEnemigo);
-		if(var>0) {
-			contadoresEnemigosTipo.put(tipoEnemigo, var-1);
-			contadorEnemigosTotales--;
-			if(!contadoresEliminadosTipo.containsKey(tipoEnemigo)) {
-				contadoresEliminadosTipo.put(tipoEnemigo, 0);
+	protected void comprobarAntesDeEliminar(int tipoEnemigo) throws InterruptedException{
+		if(!contadoresEliminadosTipo.containsKey(tipoEnemigo)) {
+			wait();
+			
 		}
-			int jdk=contadoresEliminadosTipo.get(tipoEnemigo);
-			contadoresEliminadosTipo.put(tipoEnemigo, jdk+1);
-			ImprimirInfo(tipoEnemigo,"B");
+		while(contadorEnemigosTotales==MINENEMIGOS) {
+			wait();
 		}
-	}
+		
 	
 	
 	}
