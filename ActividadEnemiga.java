@@ -26,7 +26,12 @@ public class ActividadEnemiga implements Runnable{
 	 * Run de los enemigos
 	 */
 	public void run() {
-		juego.generarEnemigo(tipo);
+		try {
+			juego.generarEnemigo(tipo);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			TimeUnit.MILLISECONDS.sleep((long) (Math.random()*5));
 		}catch(InterruptedException e){
